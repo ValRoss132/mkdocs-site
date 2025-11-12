@@ -1,0 +1,43 @@
+name: Build and Deploy of static site
+
+on:
+    push:
+        branches: ["main"]
+
+jobs:
+    deploy:
+        name: Build and Deploy
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: write
+            pages: write
+            id-token: write
+
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Python setup
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: MkDocs setup
+              run: pip install mkdocs
+
+            - name: Build
+              run: mkdocs build
+
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: "./site"
+
+            - name: Deploy to GitHub pages
+              id: deployment
+              uses: actions/deploy-pages@v4
