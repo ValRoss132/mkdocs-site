@@ -32,17 +32,28 @@ jobs:
               with:
                   path: "./site"
 
-            - name: Deploy to Helios
+            - name: Deploy MkDocs site to Helios via Rsync
+              uses: burnett01/rsync-deployments@7.1.0
+              with:
+                  path: ./site/
+
+                  remote_host: ${{ secrets.SERVER_HOST }}
+                  remote_user: ${{ secrets.SERVER_USER }}
+                  remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  remote_port: 2222
+
+                  remote_path: public_html/
+
+                  flags: -rtvz --delete
+
+            - name: Log Helios Success Message
               uses: appleboy/ssh-action@v1.0.0
               with:
                   host: ${{ secrets.SERVER_HOST }}
                   username: ${{ secrets.SERVER_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   port: 2222
-                  script: |
-                      SITE_DIR="~/public_html"
-                      mkdir -p ${SITE_DIR}
-                      rsync -rtv --delete ./site/ ${SITE_DIR}/
+                  script: echo "Deployment to Helios finished successfully. Site available at https://se.ifmo.ru/~${{ secrets.SERVER_USER }}/"
 
     deploy_pages:
         name: Deploy to GitHub Pages
