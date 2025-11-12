@@ -32,28 +32,16 @@ jobs:
               with:
                   path: "./site"
 
-            - name: Deploy MkDocs site to Helios via Rsync
-              uses: burnett01/rsync-deployments@7.1.0
-              with:
-                  path: ./site/
+            - name: Configure SSH and Private Key
+              run: |
+                  mkdir -p ~/.ssh
+                  install -m 600 /dev/null ~/.ssh/id_rsa
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+                  echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
 
-                  remote_host: ${{ secrets.SERVER_HOST }}
-                  remote_user: ${{ secrets.SERVER_USER }}
-                  remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  remote_port: 2222
-
-                  remote_path: public_html/
-
-                  flags: -rtvz --delete
-
-            - name: Log Helios Success Message
-              uses: appleboy/ssh-action@v1.0.0
-              with:
-                  host: ${{ secrets.SERVER_HOST }}
-                  username: ${{ secrets.SERVER_USER }}
-                  key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  port: 2222
-                  script: echo "Deployment to Helios finished successfully. Site available at https://se.ifmo.ru/~${{ secrets.SERVER_USER }}/"
+            - name: Deploy to Helios via Pure Rsync
+              run: |
+                  rsync -ave "ssh -p 2222 -i ~/.ssh/id_rsa -o StrictHostKeyChecking=yes" --delete ./site/ ${{ secrets.REMOTE_DEST }}
 
     deploy_pages:
         name: Deploy to GitHub Pages
