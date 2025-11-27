@@ -1,0 +1,21 @@
+{
+	"name": "mkdocs-custom-theme",
+	"version": "1.0.0",
+	"description": "Custom MkDocs theme build tools",
+	"scripts": {
+		"build:css": "postcss src/css/main.css -o theme/css/style.css",
+		"validate:html": "html-validate 'site/**/*.html'",
+		"process:html": "node scripts/process_html.js"
+	},
+	"dependencies": {
+		"autoprefixer": "^10.4.16",
+		"cssnano": "^6.0.1",
+		"glob": "^10.3.10",
+		"html-minifier-terser": "^7.2.0",
+		"html-validate": "^8.6.0",
+		"jsdom": "^23.0.0",
+		"postcss": "^8.4.31",
+		"postcss-cli": "^10.1.0",
+		"typograf": "^7.0.0"
+	}
+}

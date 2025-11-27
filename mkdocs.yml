@@ -1,1 +1,14 @@
 site_name: MkDocs-site
+site_description: 'Сайт с кастомной темой и CI/CD пайплайном'
+site_author: 'Nikita Bobkov'
+
+theme:
+  name: null
+  custom_dir: theme
+
+nav:
+  - Главная: index.md
+  - О проекте: about.md
+
+plugins:
+  - search
